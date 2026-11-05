@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta name="color-scheme" content="light">
+  <title>Sopa de Letras Gamificada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <script>document.write('<script src="config.js?fresh='+Date.now()+'"><\/script>')</script>
+  <style>
+    :root{--ink:#0f1923;--paper:#f8f4ed;--cream:#fffef9;--accent:#b5451b;--gold:#c9941a;--teal:#1a7a6e;--danger:#c0392b;--shadow:5px 5px 0 var(--ink)}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Outfit,system-ui,sans-serif;font-size:16px;min-height:100vh}
+    button,input,select{font:inherit} button{cursor:pointer} button:disabled{cursor:not-allowed;opacity:.58}
+    header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:1rem;justify-content:space-between;background:var(--ink);color:#fff;padding:.85rem clamp(1rem,4vw,2rem);border-bottom:4px solid var(--accent)}
+    .brand{font:700 clamp(1rem,3vw,1.35rem) Playfair Display,serif}.timer{text-align:right;font:500 1.05rem DM Mono,monospace;color:var(--gold)}.timer small{display:block;font:600 .72rem Outfit,sans-serif;color:#ddd;text-transform:uppercase;letter-spacing:.08em}
+    main{max-width:1280px;margin:auto;padding:1.5rem clamp(1rem,4vw,2rem) 4rem}.screen[hidden]{display:none!important}
+    .card{max-width:590px;margin:2rem auto;background:var(--cream);border:2px solid var(--ink);box-shadow:var(--shadow);padding:clamp(1.25rem,5vw,2.2rem);border-radius:5px}
+    h1,h2{font-family:Playfair Display,serif;margin:.1rem 0 .4rem}h1{font-size:clamp(1.5rem,5vw,2rem)}h2{font-size:1.35rem}.muted{color:#62666a;line-height:1.5;margin-top:0}
+    .field{margin:1rem 0}.field label{display:block;font-weight:700;font-size:.86rem;margin-bottom:.35rem}.field input,.field select{width:100%;padding:.72rem .8rem;background:#fff;border:2px solid #c9c9c9;border-radius:4px;color:var(--ink)}.field input:focus,.field select:focus{outline:3px solid color-mix(in srgb,var(--teal) 25%,transparent);border-color:var(--teal)}
+    .email-control{display:flex;align-items:stretch}.email-control input{min-width:0;border-radius:4px 0 0 4px}.email-suffix{display:flex;align-items:center;padding:0 .8rem;border:2px solid #c9c9c9;border-left:0;border-radius:0 4px 4px 0;background:#eef0f2;font-weight:700;white-space:nowrap}.field-note{display:block;margin-top:.35rem;color:#62666a;font-size:.82rem}
+    .btn{border:2px solid var(--ink);background:var(--ink);color:#fff;padding:.72rem 1rem;border-radius:4px;font-weight:700}.btn.primary{width:100%;margin-top:.5rem}.btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent)}
+    .message{display:none;margin:.9rem 0;padding:.75rem;border-left:5px solid var(--danger);background:#fff1f0;line-height:1.4}.message.show{display:block}.message.info{border-color:var(--teal);background:#eef9f7}.message.success{border-color:#26834a;background:#eef9f1}
+    .student-bar{display:flex;flex-wrap:wrap;gap:.75rem 1.4rem;background:var(--ink);color:#fff;padding:.85rem 1rem;border-left:5px solid var(--gold);border-radius:4px}.student-bar span{font-size:.78rem;color:#ddd}.student-bar strong{display:block;font-size:.94rem}
+    .sync{margin-left:auto}.sync[data-state="saved"]{color:#9be7b0}.sync[data-state="error"]{color:#ffb3ad}.sync[data-state="pending"]{color:#ffe08a}
+    .instructions{line-height:1.55;color:#555}.progress-line{display:flex;justify-content:space-between;margin:.8rem 0 .3rem;font-size:.88rem}.progress{height:9px;background:#ddd;border-radius:10px;overflow:hidden}.progress>div{height:100%;width:0;background:var(--teal);transition:width .25s}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.6rem;margin-top:1.2rem;align-items:start}.grid-card{position:sticky;top:78px;width:100%;background:var(--cream);border:2px solid var(--ink);box-shadow:var(--shadow);padding:1rem;border-radius:4px;overflow:hidden}.grid-title{font:600 .78rem DM Mono,monospace;margin-bottom:.65rem;color:#666}.word-grid{display:grid;gap:2px;width:100%}.cell{min-width:0;width:auto;height:auto;aspect-ratio:1;display:grid;place-items:center;font:500 clamp(.45rem,.9vw,.72rem) DM Mono,monospace;border-radius:2px}.cell.hit{background:#d6eee9;background:color-mix(in srgb,var(--teal) 25%,white);color:var(--teal);font-weight:700}
+    .clues{display:grid;gap:.8rem}.clue{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;background:var(--cream);border:2px solid #d7d7d7;border-radius:5px;padding:.9rem}.clue.correct{border-color:var(--teal)}.clue.wrong{border-color:var(--danger);background:#fff4f2}.clue.nearly{border-color:var(--gold);background:#fff9df}.clue.exhausted{background:#f1f1f1;border-color:#999}.clue.pending{border-color:var(--gold)}.number{background:var(--ink);color:#fff;border-radius:3px;padding:.2rem .5rem;height:max-content;font:500 .76rem DM Mono,monospace}.clue-text{line-height:1.45;margin-bottom:.55rem}.answer-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.answer{min-width:180px;max-width:300px;flex:1;text-transform:uppercase;padding:.55rem .65rem;border:2px solid #bbb;border-radius:4px;font-family:DM Mono,monospace}.wrong .answer{border-color:var(--danger)}.nearly .answer{border-color:var(--gold);background:#fff9c4}.correct .answer{border-color:var(--teal);background:#f4f0c5}.verify{padding:.55rem .75rem}.feedback{font-size:.86rem;font-weight:600}.correct .feedback{color:var(--teal)}.wrong .feedback,.exhausted .feedback{color:var(--danger)}.nearly .feedback{color:#8a6900}.attempt-indicator{display:flex;gap:4px;align-items:center}.attempt-dot{width:10px;height:10px;border-radius:50%;background:#ddd;border:1px solid #bbb}.attempt-dot.correct{background:var(--teal);border-color:var(--teal)}.attempt-dot.wrong{background:var(--danger);border-color:var(--danger)}.solution{margin-left:auto;color:var(--teal);font-weight:800;letter-spacing:.04em}
+    .submit-area{text-align:center;margin:1.5rem 0}.submit-area .btn{min-width:220px}.clue.needs-verification{border-color:var(--accent)}.answer.needs-verification,.verify.needs-verification{border-color:var(--accent);animation:verifyPulse .8s ease-in-out 1}.verify.needs-verification{background:var(--accent)}.result{display:none;text-align:center;background:var(--ink);color:#fff;padding:1.3rem;margin:1rem 0;border-radius:4px}.result.show{display:block}.score{font:900 3rem Playfair Display,serif;color:var(--gold)}
+    @keyframes verifyPulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--gold) 65%,transparent);background:#ffe89a;color:var(--ink)}}
+    @media(prefers-reduced-motion:reduce){.answer.needs-verification,.verify.needs-verification{animation:none;outline:4px solid var(--gold);outline-offset:2px}}
+    dialog{max-width:520px;width:calc(100% - 2rem);border:2px solid var(--ink);box-shadow:var(--shadow);border-radius:5px;padding:1.25rem}dialog::backdrop{background:#0f1923aa}.dialog-actions{display:flex;gap:.7rem;justify-content:flex-end;margin-top:1rem}.secondary{background:#fff;color:var(--ink)}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.grid-card{position:static}.word-grid{margin:auto}}
+    @media(max-width:560px){header{align-items:flex-start}.brand{max-width:65%}.card{margin:.7rem auto}.student-bar{display:grid;grid-template-columns:1fr 1fr}.sync{margin-left:0}.grid-card{margin-inline:-.35rem}.word-grid{gap:1px}.cell{font-size:clamp(.42rem,2.2vw,.66rem)}.clue{padding:.75rem}.answer{width:100%;max-width:none}.verify{flex:1}}
+  </style>
+</head>
+<body>
+<header><div class="brand" id="brand">Sopa de Letras Gamificada</div><div class="timer" id="timer" hidden><small>Tiempo restante</small><span id="timerText">--:--</span></div></header>
+<main>
+  <section id="registerScreen" class="screen">
+    <div class="card">
+      <h1 id="registerTitle">Sopa de Letras Gamificada</h1><p class="muted" id="courseText"></p>
+      <div id="registerMessage" class="message" role="alert"></div>
+      <div class="field"><label for="lastName">Apellidos</label><input id="lastName" autocomplete="family-name" maxlength="80"></div>
+      <div class="field"><label for="firstName">Nombre</label><input id="firstName" autocomplete="given-name" maxlength="60"></div>
+      <div class="field"><label for="email">Correo institucional</label><div class="email-control"><input id="email" type="text" autocomplete="username" inputmode="email" maxlength="100" aria-describedby="emailNote"><span class="email-suffix" aria-hidden="true">@ufide.ac.cr</span></div><small id="emailNote" class="field-note">Escriba únicamente lo que aparece antes del @.</small></div>
+      <div class="field"><label for="day">Día de la semana</label><select id="day"><option value="">Seleccione el día</option></select></div>
+      <div class="field"><label for="time">Horario</label><select id="time"><option value="">Seleccione el horario</option></select></div>
+      <button id="startButton" class="btn primary">Ingresar por primera vez</button>
+      <button id="resumeButton" class="btn primary secondary">Retomar actividad</button>
+    </div>
+  </section>
+
+  <section id="activityScreen" class="screen" hidden>
+    <div class="student-bar">
+      <div><span>Estudiante</span><strong id="studentName"></strong></div><div><span>Correo</span><strong id="studentEmail"></strong></div><div><span>Grupo</span><strong id="studentGroup"></strong></div><div><span>Intento</span><strong>Único</strong></div><div class="sync" id="syncState" data-state="saved">Listo</div>
+    </div>
+    <div id="activityMessage" class="message" role="alert"></div>
+    <div id="result" class="result"><div class="score" id="score">0</div><div>puntos de 100</div><p id="resultText"></p></div>
+    <h1 id="activityTitle"></h1><p class="instructions" id="instructions"></p>
+    <div class="progress-line"><span>Preguntas resueltas</span><strong id="progressText">0 / 0</strong></div><div class="progress"><div id="progressFill"></div></div>
+    <div class="layout"><aside class="grid-card"><div class="grid-title">SOPA DE LETRAS · REFERENCIA</div><div id="wordGrid" class="word-grid"></div></aside><section><div id="clues" class="clues"></div><div class="submit-area"><button id="submitButton" class="btn">Entregar actividad</button></div></section></div>
+  </section>
+</main>
+<dialog id="submitDialog"><h2>Confirmar entrega</h2><p id="submitSummary"></p><div class="dialog-actions"><button id="cancelSubmit" class="btn secondary">Seguir trabajando</button><button id="confirmSubmit" class="btn">Entregar definitivamente</button></div></dialog>
+<script>
+(() => {
+  'use strict';
+  const C = window.SOPA_CONFIG;
+  if (!C) { document.body.innerHTML='<main><div class="card"><h1>Error de configuración</h1><p>No se encontró config.js.</p></div></main>'; return; }
+  const $=id=>document.getElementById(id), letterBase={Æ:'AE',Œ:'OE',Ø:'O',Ł:'L',Đ:'D',Ð:'D',Þ:'TH'}, norm=s=>String(s||'').toUpperCase().replace(/[ÆŒØŁĐÐÞ]/g,c=>letterBase[c]).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z]/g,'');
+  const levenshtein=(a,b)=>{const row=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let prev=row[0];row[0]=i;for(let j=1;j<=b.length;j++){const old=row[j];row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=old}}return row[b.length]};
+  const compoundComponents=Object.freeze({ECUACIONLINEAL:['ECUACION','LINEAL'],ECUACIONCUADRATICA:['ECUACION','CUADRATICA'],POLINOMIOCUADRATICO:['POLINOMIO','CUADRATICO'],CONJUNTOVACIO:['CONJUNTO','VACIO'],DIVISIONSINTETICA:['DIVISION','SINTETICA'],REGLADELACADENA:['REGLA','CADENA'],NOEXISTE:['EXISTE'],PERCAPITA:['CAPITA'],REGLADEBARROW:['REGLA','BARROW'],PORPARTES:['PARTES'],RAZONESTRIGONOMETRICAS:['RAZONES','TRIGONOMETRICAS'],DERIVADAPARCIAL:['DERIVADA','PARCIAL'],ORDENSUPERIOR:['ORDEN','SUPERIOR'],DERIVADAIMPLICITA:['DERIVADA','IMPLICITA'],DERIVADADIRECCIONAL:['DERIVADA','DIRECCIONAL'],TABLADEVERDAD:['TABLA','VERDAD'],NEWTONRAPHSON:['NEWTON','RAPHSON'],GAUSSSEIDEL:['GAUSS','SEIDEL'],PUNTOFIJO:['PUNTO','FIJO'],REGLAFALSA:['REGLA','FALSA'],ECUACIONDIFERENCIAL:['ECUACION','DIFERENCIAL'],ECUACIONINEXACTA:['ECUACION','INEXACTA'],REDUCCIONDEORDEN:['REDUCCION','ORDEN'],FACTORINTEGRANTE:['FACTOR','INTEGRANTE'],SOLUCIONGENERAL:['SOLUCION','GENERAL'],FUNCIONLOGARITMICA:['FUNCION','LOGARITMICA'],FUNCIONLINEAL:['FUNCION','LINEAL'],FUNCIONEXPONENCIAL:['FUNCION','EXPONENCIAL'],FUNCIONCUADRATICA:['FUNCION','CUADRATICA'],DOMINIOMAXIMO:['DOMINIO','MAXIMO'],FUNCIONOBJETIVO:['FUNCION','OBJETIVO'],MAXIMOGLOBAL:['MAXIMO','GLOBAL'],MAXIMOLOCAL:['MAXIMO','LOCAL'],MINIMOLOCAL:['MINIMO','LOCAL'],SEGUNDADERIVADA:['SEGUNDA','DERIVADA'],PRIMERADERIVADA:['PRIMERA','DERIVADA'],FRACCIONESPARCIALES:['FRACCIONES','PARCIALES'],SOLIDODEREVOLUCION:['SOLIDO','REVOLUCION'],CAMPOVECTORIAL:['CAMPO','VECTORIAL'],CAMPOCONSERVATIVO:['CAMPO','CONSERVATIVO'],INTEGRALDEFLUJO:['INTEGRAL','FLUJO'],RECTASPARALELAS:['RECTAS','PARALELAS'],TRIANGULARSUPERIOR:['TRIANGULAR','SUPERIOR'],MATRIZCOLUMNA:['MATRIZ','COLUMNA'],PRODUCTOESCALAR:['PRODUCTO','ESCALAR'],SUMADEFILAS:['SUMA','FILAS'],POSICIONESTANDAR:['POSICION','ESTANDAR'],UNARECTA:['RECTA'],PRODUCTOCRUZ:['PRODUCTO','CRUZ'],CIRCUITOCOMPUTACIONAL:['CIRCUITO','COMPUTACIONAL'],MAPASDEKARNAUGH:['MAPAS','KARNAUGH'],FUNCIONBOOLEANA:['FUNCION','BOOLEANA'],EXPRESIONBOOLEANA:['EXPRESION','BOOLEANA'],DEMORGAN:['MORGAN'],DIFERENCIASDIVIDIDAS:['DIFERENCIAS','DIVIDIDAS'],MINIMOSCUADRADOS:['MINIMOS','CUADRADOS'],NEWTONCOTES:['NEWTON','COTES'],TRAZADORESCUBICOS:['TRAZADORES','CUBICOS'],VALORESINICIALES:['VALORES','INICIALES'],LINEALPRIMERORDEN:['LINEAL','PRIMER','ORDEN'],VARIABLESSEPARABLES:['VARIABLES','SEPARABLES']});
+  const isNearlyCorrect=(value,correct)=>value.length>=3&&(levenshtein(value,correct)===1||(compoundComponents[correct]||[correct]).some(component=>component.startsWith(value)));
+  const hash=s=>{let h=5381;for(let i=0;i<s.length;i++)h=(Math.imul(h,33)^s.charCodeAt(i))>>>0;return h};
+  const eventId=()=>{
+    if(globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function')return globalThis.crypto.randomUUID();
+    const clock=globalThis.performance&&typeof globalThis.performance.now==='function'?globalThis.performance.now():Date.now();
+    return `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${hash(String(clock)).toString(36)}`;
+  };
+  const rngFor=seed=>{let s=seed>>>0;return()=>{s=(Math.imul(1664525,s)+1013904223)>>>0;return s/4294967296}};
+  const shuffle=(a,r)=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  let session=null, questions=[], states={}, gridCells=new Map(), timerId=null, pendingEvents=[], sending=false, submitting=false, revision=0, draftTimer=null, syncTimer=null, retryTimer=null, finalPromptShown=false;
+  const pendingQuestionIds=new Set();
+  const selectedGroupId=()=>C.schedules.find(s=>s.day===$('day').value&&s.time===$('time').value)?.id||'';
+  const localKey=email=>`sopa:v2:${C.activityId}:${email.toLowerCase()}`;
+  function applyConfig(){document.title=C.title;$('brand').textContent=C.title;$('registerTitle').textContent=C.title;$('activityTitle').textContent=C.title;$('courseText').textContent=C.course;$('instructions').textContent=C.instructions;const t=C.theme||{};for(const [k,v] of Object.entries(t))document.documentElement.style.setProperty('--'+(k==='danger'?'danger':k),v);const days=new Map(),times=new Map();for(const s of C.schedules){if(!days.has(s.day))days.set(s.day,s.dayLabel);if(!times.has(s.time))times.set(s.time,s.timeLabel)}for(const [value,label]of days){const o=document.createElement('option');o.value=value;o.textContent=label;$('day').append(o)}for(const [value,label]of times){const o=document.createElement('option');o.value=value;o.textContent=label;$('time').append(o)}}
+  function message(target,text,type=''){target.textContent=text;target.className='message show '+type} function clearMessage(target){target.className='message';target.textContent=''}
+  function credentials(){const domain=String(C.institutionalDomain||'ufide.ac.cr').toLowerCase().replace(/^@/,'');const suffix='@'+domain;let emailUser=$('email').value.trim().toLowerCase();while(emailUser.endsWith(suffix))emailUser=emailUser.slice(0,-suffix.length).trim();$('email').value=emailUser;return{firstName:$('firstName').value.trim(),lastName:$('lastName').value.trim(),emailUser,email:emailUser?emailUser+suffix:'',groupId:selectedGroupId()}}
+  function validateCredentials(v,mode){if(!v.emailUser)return'Complete el correo institucional.';if(mode==='start'&&!v.groupId)return'Seleccione el día y el horario.';if(mode==='start'&&(!v.firstName||!v.lastName))return'Complete su nombre y apellidos para ingresar por primera vez.';if(v.emailUser.includes('@')||/\s/.test(v.emailUser))return'En el correo escriba únicamente lo que aparece antes del @.';const domain=String(C.institutionalDomain||'').toLowerCase().replace(/^@/,'');if(domain&&!v.email.endsWith('@'+domain))return`Utilice su correo institucional @${domain}.`;return''}
+  const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  const trafficDelay=(seed,max=2500)=>sleep(hash(String(seed||''))%max);
+  const isTransientError=text=>/ocupad|demasiado|tempor|timeout|lock|service|localiz|fila fue creada|http 429|http 5\d\d|conexi[oó]n|network|fetch/i.test(String(text||''));
+  async function apiGet(params,timeoutMs=30000,retries=1){let lastError;for(let attempt=0;attempt<=retries;attempt++){const url=new URL(C.scriptUrl),controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);Object.entries({...params,_:Date.now()+'-'+attempt}).forEach(([k,v])=>url.searchParams.set(k,v));try{const response=await fetch(url,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(data?.ok===false&&isTransientError(data.error)&&attempt<retries)throw new Error(data.error);return data}catch(error){lastError=error?.name==='AbortError'?new Error('La conexión tardó demasiado. Intente nuevamente.'):error;if(attempt>=retries||!isTransientError(lastError?.message))throw lastError;await sleep(2500+Math.floor(Math.random()*2500)+attempt*3000)}finally{clearTimeout(timer)}}throw lastError}
+  async function apiPost(payload,timeoutMs=35000,retries=1){let lastError;for(let attempt=0;attempt<=retries;attempt++){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);try{const response=await fetch(C.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({...payload,requestAttempt:attempt}),cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(data?.ok===false&&isTransientError(data.error)&&attempt<retries)throw new Error(data.error);return data}catch(error){lastError=error?.name==='AbortError'?new Error('La conexión tardó demasiado. Intente nuevamente.'):error;if(attempt>=retries||!isTransientError(lastError?.message))throw lastError;await sleep(2500+Math.floor(Math.random()*2500)+attempt*3000)}finally{clearTimeout(timer)}}throw lastError}
+  async function enter(mode){const v=credentials(),err=validateCredentials(v,mode);if(err){message($('registerMessage'),err);return}if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(C.scriptUrl)){message($('registerMessage'),'La URL de Apps Script no está configurada. Avise al docente.');return}clearMessage($('registerMessage'));$('startButton').disabled=true;$('resumeButton').disabled=true;message($('registerMessage'),mode==='resume'?'Esperando turno para recuperar su actividad…':'Esperando turno para crear su actividad…','info');try{await trafficDelay(`${C.activityId}|${v.email}`,15000);message($('registerMessage'),mode==='resume'?'Buscando su actividad…':'Creando su actividad…','info');const previous=loadLocal(v.email);const data=await apiGet({action:'enter',mode,activityId:C.activityId,email:v.email,firstName:v.firstName,lastName:v.lastName,groupId:v.groupId,token:previous?.token||''},45000,3);if(!data.ok)throw new Error(data.error||'No se pudo ingresar');session=data.session;saveLocal({...(previous||{}),token:data.token,drafts:previous?.drafts||{},pendingEvents:previous?.pendingEvents||[]});launch(data)}catch(e){message($('registerMessage'),e.message||'No se pudo conectar.')}finally{$('startButton').disabled=false;$('resumeButton').disabled=false}}
+  function selectQuestions(){const byId=new Map(C.questions.map(q=>[q.id,q])),saved=Array.isArray(session.assignedQuestionIds)?session.assignedQuestionIds:[],selected=saved.map(id=>byId.get(id)).filter(Boolean);if(selected.length)return selected.map((q,i)=>({...q,n:i+1}));const r=rngFor(hash(`${session.sessionId}|${C.activityId}|${C.activityVersion}`)),unique=[...new Map(C.questions.map(q=>[q.answer,q])).values()];return shuffle(unique,r).slice(0,Math.min(C.wordsPerStudent,unique.length)).map((q,i)=>({...q,n:i+1}))}
+  function launch(data){questions=selectQuestions();states={};pendingEvents=[];pendingQuestionIds.clear();sending=false;submitting=false;clearTimeout(syncTimer);clearTimeout(retryTimer);finalPromptShown=false;for(const q of questions)states[q.id]={attempts:[],history:[],correct:false,exhausted:false,nearUsed:false,lastResult:'',draft:''};for(const [id,s] of Object.entries(data.answers||{}))if(states[id])states[id]={...states[id],...s};const local=loadLocal(session.email);if(local?.drafts)for(const [id,d] of Object.entries(local.drafts))if(states[id]&&!states[id].correct&&!states[id].exhausted)states[id].draft=d;if(Array.isArray(local?.pendingEvents)){pendingEvents=local.pendingEvents.filter(event=>{const state=states[event.questionId],count=Array.isArray(state?.history)?state.history.length:0;return state&&count<Number(event.attemptNumber||0)}).slice(0,30);for(const event of pendingEvents)applyLocalEvent(event,false)}$('studentName').textContent=`${session.lastName}, ${session.firstName}`;$('studentEmail').textContent=session.email;$('studentGroup').textContent=session.groupLabel;$('registerScreen').hidden=true;$('activityScreen').hidden=false;$('timer').hidden=false;renderGrid();renderClues();updateProgress();startTimer();if(pendingEvents.length)setSync('pending',`Pendiente de guardar (${pendingEvents.length})`);if(session.status==='ENTREGADO'||session.expired)showFinished(data.score,session.expired?'El tiempo finalizó.':'Actividad entregada.');else if(local?.pendingSubmission&&questions.every(q=>states[q.id].correct||states[q.id].exhausted)){message($('activityMessage'),'Se recuperó una entrega interrumpida. Confirmando respuestas y calificación…','info');setTimeout(()=>submit(false,true),500)}else{if(pendingEvents.length)scheduleBatchSync();setTimeout(maybePromptFinalSubmission,250)}}
+  function buildGrid(layoutAttempt=0){
+    const size=C.gridSize||20,g=Array.from({length:size},()=>Array(size).fill('')),usedDirections=Array.from({length:size},()=>Array.from({length:size},()=>new Set())),placed=[],r=rngFor(hash(`${session.sessionId}|grid|${layoutAttempt}`)),dirs=[[0,1],[1,0]];
+    const assignedAnswers=new Set(questions.map(q=>q.answer));
+    const targetSource=[...questions].sort((a,b)=>b.answer.length-a.answer.length);
+    const orientationRng=rngFor(hash(`${session.sessionId}|${C.activityId}|orientations|${layoutAttempt}`));
+    const horizontalChoices=targetSource.length===10?[4,5,5,6]:[Math.round(targetSource.length/2)];
+    const horizontalCount=horizontalChoices[Math.floor(orientationRng()*horizontalChoices.length)];
+    const targetDirections=shuffle([
+      ...Array.from({length:horizontalCount},()=>[0,1]),
+      ...Array.from({length:targetSource.length-horizontalCount},()=>[1,0])
+    ],orientationRng);
+    const crossingGoal=targetSource.length===10?[4,5,5,6][Math.floor(orientationRng()*4)]:Math.max(1,Math.round(targetSource.length/2));
+    const targets=targetSource.map((q,index)=>({...q,isDecoy:false,forcedDir:targetDirections[index]}));
+    const decoyRng=rngFor(hash(`${session.sessionId}|${C.activityId}|decoys`));
+    const decoys=shuffle(C.questions.filter(q=>!assignedAnswers.has(q.answer)),decoyRng).slice(0,6).sort((a,b)=>b.answer.length-a.answer.length).map(q=>({...q,isDecoy:true}));
+    let decoyCount=0,crossingCount=0;
+    for(const q of [...targets,...decoys]){
+      const candidates=[],candidateDirections=q.forcedDir?[q.forcedDir]:dirs;
+      for(const [dr,dc] of candidateDirections){
+        const lastRow=dr?size-q.answer.length:size-1,lastCol=dc?size-q.answer.length:size-1;
+        for(let row=0;row<=lastRow;row++)for(let col=0;col<=lastCol;col++){
+          let compatible=true,crossings=0,shared=0;
+          for(let i=0;i<q.answer.length;i++){
+            const y=row+dr*i,x=col+dc*i,letter=g[y][x];
+            if(letter&&letter!==q.answer[i]){compatible=false;break}
+            if(letter){shared++;if(usedDirections[y][x].has(dr?'H':'V'))crossings++}
+          }
+          if(compatible)candidates.push({dr,dc,row,col,crossings,shared});
+        }
+      }
+      if(!candidates.length){if(!q.isDecoy){if(layoutAttempt<120)return buildGrid(layoutAttempt+1);throw new Error(`No se pudo colocar ${q.answer}`)}continue}
+      const crossingCandidates=candidates.filter(candidate=>candidate.crossings>0),nonCrossingCandidates=candidates.filter(candidate=>candidate.crossings===0);
+      let pool=candidates;
+      if(!q.isDecoy){
+        if(crossingCount<crossingGoal&&crossingCandidates.length)pool=crossingCandidates;
+        else if(crossingCount>=crossingGoal&&nonCrossingCandidates.length)pool=nonCrossingCandidates;
+        else if(crossingCount>=crossingGoal){if(layoutAttempt<120)return buildGrid(layoutAttempt+1);throw new Error(`No se pudo construir una cuadrícula equilibrada con ${q.answer}`)}
+      }
+      const choice=pool[Math.floor(r()*pool.length)],cells=[],directionKey=choice.dr?'V':'H';
+      for(let i=0;i<q.answer.length;i++){
+        const row=choice.row+choice.dr*i,col=choice.col+choice.dc*i;
+        g[row][col]=q.answer[i];usedDirections[row][col].add(directionKey);cells.push(`${row}:${col}`);
+      }
+      if(q.isDecoy)decoyCount++;else{placed.push([q.id,cells]);if(choice.crossings>0)crossingCount++}
+    }
+    if(crossingCount!==crossingGoal){if(layoutAttempt<120)return buildGrid(layoutAttempt+1);throw new Error('No se alcanzó el número previsto de cruces.')}
+    const alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(!g[y][x])g[y][x]=alpha[Math.floor(r()*alpha.length)];
+    return{g,placed,size,decoyCount,crossingCount,crossingGoal,layoutAttempt};
+  }
+  function renderGrid(){const box=$('wordGrid');box.innerHTML='';gridCells.clear();let built;try{built=buildGrid()}catch(e){message($('activityMessage'),e.message);return}box.style.gridTemplateColumns=`repeat(${built.size},1fr)`;built.g.forEach((row,y)=>row.forEach((letter,x)=>{const cell=document.createElement('div');cell.className='cell';cell.textContent=letter;box.append(cell);gridCells.set(`${y}:${x}`,cell)}));for(const [id,cells] of built.placed)states[id].cells=cells;syncHighlights()}
+  function renderClues(){const box=$('clues');box.innerHTML='';for(const q of questions){const s=states[q.id],row=document.createElement('article');row.className='clue'+(s.correct?' correct':s.exhausted?' exhausted':s.lastResult==='near'?' nearly':s.lastResult==='wrong'?' wrong':s.draft?' pending':'');row.dataset.id=q.id;const num=document.createElement('div');num.className='number';num.textContent=q.n;const body=document.createElement('div'),text=document.createElement('div');text.className='clue-text';text.textContent=q.clue;const ar=document.createElement('div');ar.className='answer-row';const input=document.createElement('input');input.className='answer';input.value=s.correct?q.answer:(s.draft||'');input.placeholder='ESCRIBE LA PALABRA...';input.disabled=s.correct||s.exhausted||session.status==='ENTREGADO';input.maxLength=60;input.autocomplete='off';input.autocorrect='off';input.autocapitalize='characters';input.spellcheck=false;input.setAttribute('aria-label',`Respuesta ${q.n}`);input.addEventListener('input',()=>{s.draft=input.value.toUpperCase();s.lastResult='';row.classList.toggle('pending',!!s.draft);scheduleDraftSave()});input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();verify(q.id)}});const btn=document.createElement('button');btn.className='btn verify';btn.textContent='Verificar';btn.disabled=s.correct||s.exhausted||session.status==='ENTREGADO';btn.addEventListener('click',()=>verify(q.id));const dots=document.createElement('span');dots.className='attempt-indicator';for(let i=0;i<2;i++){const dot=document.createElement('span');dot.className='attempt-dot'+(i<s.attempts.length?(s.correct&&i===s.attempts.length-1?' correct':' wrong'):'');dots.append(dot)}const fb=document.createElement('span');fb.className='feedback';fb.textContent=s.correct?'✓ ¡Correcto!':s.exhausted?'✗ Agotaste los intentos':s.lastResult==='near'?'⚠ Casi correcto, revisá la palabra en la sopa de letras':s.lastResult==='wrong'?'✗ Incorrecto, intenta de nuevo':'';ar.append(input,btn,dots,fb);body.append(text,ar);row.append(num,body);box.append(row)}}
+  function verify(id,quiet=false){
+    try{
+      const s=states[id];
+      if(!s||s.correct||s.exhausted||session.status==='ENTREGADO')return false;
+      const value=norm(s.draft);
+      if(!value){message($('activityMessage'),'Escriba una respuesta antes de pulsar Verificar.','info');return false}
+      clearTimeout(draftTimer);
+      const question=questions.find(q=>q.id===id);
+      if(!question)throw new Error('Pregunta inexistente.');
+      const correct=question.answer;
+      const attemptNumber=(Array.isArray(s.history)?s.history.length:0)+1;
+      const event={eventId:eventId(),questionId:id,value,expectedDraft:value,attemptNumber,questionSignature:hash(`${id}|${correct}`)};
+      if(!applyLocalEvent(event,true))throw new Error('Intento no aplicado.');
+      pendingEvents.push(event);
+      revision++;
+      saveDrafts();
+      clearMessage($('activityMessage'));
+      setSync('pending',`Pendiente de guardar (${pendingEvents.length})`);
+      if(!quiet)scheduleBatchSync();
+      maybePromptFinalSubmission();
+      return true;
+    }catch(error){
+      message($('activityMessage'),'No se pudo procesar el intento. Pulse Verificar nuevamente; su respuesta permanece escrita.');
+      return false;
+    }
+  }
+  function applyLocalEvent(event,refresh=true){const s=states[event.questionId],q=questions.find(item=>item.id===event.questionId);if(!s||!q||s.correct||s.exhausted)return false;const count=Array.isArray(s.history)?s.history.length:0;if(Number(event.attemptNumber)!==count+1)return false;const value=norm(event.value),correct=norm(q.answer);let result;if(value===correct){s.attempts=[...(Array.isArray(s.attempts)?s.attempts:[]),value].slice(0,2);s.correct=true;result='correct'}else if(!s.nearUsed&&isNearlyCorrect(value,correct)){s.nearUsed=true;result='near'}else{s.attempts=[...(Array.isArray(s.attempts)?s.attempts:[]),value].slice(0,2);s.exhausted=s.attempts.length>=2;result='wrong'}s.history=[...(Array.isArray(s.history)?s.history:[]),{value,result}];s.lastResult=result;s.draft=result==='near'?value:'';event.localResult=result;if(refresh){renderClues();syncHighlights();updateProgress()}return true}
+  function scheduleBatchSync(){if(!session||!pendingEvents.length||sending)return;const threshold=pendingEvents.length>=3;const delay=threshold?hash(`${session.sessionId}|${pendingEvents[0].eventId}`)%6000:12000+hash(session.sessionId)%6000;if(syncTimer&&!threshold)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>{syncTimer=null;flush(false)},delay)}
+  function highlight(id){for(const key of states[id].cells||[])gridCells.get(key)?.classList.add('hit')}
+  function syncHighlights(){for(const cell of gridCells.values())cell.classList.remove('hit');for(const q of questions)if(states[q.id]?.correct)highlight(q.id)}
+  function updateProgress(){const done=Object.values(states).filter(s=>s.correct||s.exhausted).length;$('progressText').textContent=`${done} / ${questions.length}`;$('progressFill').style.width=`${questions.length?done/questions.length*100:0}%`}
+  function scheduleDraftSave(){clearTimeout(draftTimer);draftTimer=setTimeout(saveDrafts,300)} function saveDrafts(){if(!session)return;const old=loadLocal(session.email)||{};saveLocal({...old,drafts:rememberDrafts(),pendingEvents:pendingEvents.slice(0,30)})} function rememberDrafts(){return Object.fromEntries(Object.entries(states).filter(([,s])=>s.draft&&!s.correct&&!s.exhausted).map(([id,s])=>[id,s.draft]))} function loadLocal(email){try{return JSON.parse(localStorage.getItem(localKey(email)))}catch{return null}} function saveLocal(v){try{localStorage.setItem(localKey(session?.email||credentials().email),JSON.stringify(v))}catch{}}
+  function currentSubmissionIntent(timeUp=false){const old=loadLocal(session.email)||{};if(old.pendingSubmission)return old.pendingSubmission;const intent={submissionId:eventId(),createdAt:Date.now(),timeUp:!!timeUp,expectedScore:calculatedScore(),expectedCounts:Object.fromEntries(questions.map(q=>[q.id,Array.isArray(states[q.id]?.history)?states[q.id].history.length:0])),requiredEventIds:pendingEvents.map(event=>event.eventId)};saveLocal({...old,drafts:rememberDrafts(),pendingEvents:pendingEvents.slice(0,30),pendingSubmission:intent});return intent}
+  function durablePendingEvents(){const saved=loadLocal(session?.email||'')?.pendingEvents||[],byId=new Map();for(const event of [...saved,...pendingEvents])if(event?.eventId)byId.set(event.eventId,event);return [...byId.values()].slice(0,30)}
+  function clearSubmissionIntent(){if(!session)return;const old=loadLocal(session.email)||{};saveLocal({...old,drafts:{},pendingEvents:[],pendingSubmission:null})}
+  function mergeServerState(id,server,expectedDraft=null){const current=states[id];if(!current||!server)return;const currentCount=Array.isArray(current.history)?current.history.length:0,serverCount=Array.isArray(server.history)?server.history.length:0;if(serverCount<currentCount)return;const liveDraft=current.draft;Object.assign(current,server);if(expectedDraft===null?!!liveDraft:liveDraft!==expectedDraft)current.draft=liveDraft}
+  function maybePromptFinalSubmission(){if(finalPromptShown||sending||submitting||pendingEvents.length||loadLocal(session?.email||'')?.pendingSubmission||!session||session.status==='ENTREGADO'||!questions.length||!questions.every(q=>states[q.id].correct||states[q.id].exhausted))return;finalPromptShown=true;message($('activityMessage'),'Todas las respuestas están guardadas. Confirmando automáticamente la entrega…','info');submit(false)}
+  async function recoverUnconfirmed(events){
+    let data=null;
+    await sleep(1200+(events[0]?hash(events[0].eventId)%2500:0));
+    try{data=await apiGet({action:'status',activityId:C.activityId,sessionId:session.sessionId,groupId:session.groupId,token:loadLocal(session.email)?.token||''},20000,0)}catch{}
+    const confirmed=new Set();
+    if(data?.ok&&data.answers){
+      for(const event of events){
+        const server=data.answers[event.questionId],count=Array.isArray(server?.history)?server.history.length:0;
+        if(server&&count>=event.attemptNumber){mergeServerState(event.questionId,server,event.expectedDraft);confirmed.add(event.eventId)}
+      }
+    }
+    const remaining=[];
+    for(const event of events){
+      pendingQuestionIds.delete(event.questionId);
+      if(!confirmed.has(event.eventId))remaining.push(event)
+    }
+    renderClues();
+    syncHighlights();
+    updateProgress();saveDrafts();
+    return{allConfirmed:events.length>0&&confirmed.size===events.length,remaining,confirmed};
+  }
+  async function flush(finalize){
+    clearTimeout(syncTimer);syncTimer=null;clearTimeout(retryTimer);retryTimer=null;
+    const waitUntil=Date.now()+(finalize?22000:0);
+    while(sending&&Date.now()<waitUntil)await sleep(150);
+    if(sending)return false;
+    sending=true;setSync('pending','Guardando…');
+    const batch=pendingEvents.slice(0,30),unconfirmed=[...batch],sentRevision=revision,token=loadLocal(session.email)?.token||'';
+    try{
+      if(!batch.length){setSync('saved','Guardado');return true}
+      for(let offset=0;offset<batch.length;offset+=3){
+        const chunk=batch.slice(offset,offset+3);
+        const saved=await apiGet({action:'batch',activityId:C.activityId,sessionId:session.sessionId,groupId:session.groupId,token,revision:sentRevision,events:JSON.stringify(chunk)},30000,0);
+        if(!saved.ok)throw new Error(saved.error||'No se guardaron las respuestas');
+        if(!saved.answers)throw new Error('Apps Script y config.js no reconocen las mismas preguntas');
+        for(const event of chunk){if(saved.answers[event.questionId])mergeServerState(event.questionId,saved.answers[event.questionId],event.expectedDraft);const index=unconfirmed.findIndex(item=>item.eventId===event.eventId);if(index>=0)unconfirmed.splice(index,1)}
+        const confirmedIds=new Set(chunk.map(event=>event.eventId));
+        pendingEvents=pendingEvents.filter(event=>!confirmedIds.has(event.eventId));
+        saveDrafts();
+      }
+      renderClues();syncHighlights();updateProgress();
+      if(pendingEvents.length){setSync('pending',`Pendiente de guardar (${pendingEvents.length})`);scheduleBatchSync()}else{setSync('saved','Guardado');clearMessage($('activityMessage'))}
+      maybePromptFinalSubmission();
+      return true;
+    }catch(e){
+      const recovery=await recoverUnconfirmed(unconfirmed);const batchIds=new Set(unconfirmed.map(event=>event.eventId)),remainingIds=new Set(recovery.remaining.map(event=>event.eventId));pendingEvents=pendingEvents.filter(event=>!batchIds.has(event.eventId)||remainingIds.has(event.eventId));saveDrafts();
+      if(recovery.allConfirmed&&!pendingEvents.length){setSync('saved','Guardado');clearMessage($('activityMessage'));maybePromptFinalSubmission();return true}
+      setSync('error',`Sin confirmar (${pendingEvents.length})`);
+      message($('activityMessage'),'La conexión se interrumpió, pero las respuestas permanecen guardadas en este dispositivo. El sistema volverá a intentarlo automáticamente.');
+      renderClues();syncHighlights();
+      clearTimeout(retryTimer);retryTimer=setTimeout(()=>{retryTimer=null;flush(false)},12000+hash(session.sessionId)%18000);
+      return false;
+    }finally{sending=false;if(pendingEvents.length&&!retryTimer)scheduleBatchSync();else maybePromptFinalSubmission()}
+  }
+  function setSync(state,text){$('syncState').dataset.state=state;$('syncState').textContent=text}
+  function startTimer(){clearInterval(timerId);const tick=()=>{const left=Math.max(0,Math.ceil((Number(session.deadlineAt)-Date.now())/1000)),m=Math.floor(left/60),s=left%60;$('timerText').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(left<=0){clearInterval(timerId);submit(true)}};tick();timerId=setInterval(tick,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()},{once:false});window.addEventListener('focus',tick,{once:false})}
+  function prepareSubmit(){const pending=questions.filter(q=>!states[q.id].correct&&!states[q.id].exhausted);if(pending.length){const first=pending[0],hasDraft=!!states[first.id].draft.trim();message($('activityMessage'),hasDraft?'La respuesta escrita todavía no ha sido verificada. Pulse el botón Verificar que está resaltado.':`Aún faltan ${pending.length} preguntas. Escriba una respuesta y después pulse el botón Verificar resaltado.`,'info');document.querySelectorAll('.needs-verification').forEach(el=>el.classList.remove('needs-verification'));const row=document.querySelector(`.clue[data-id="${first.id}"]`),input=row?.querySelector('input'),button=row?.querySelector('.verify');row?.classList.add('needs-verification');input?.classList.add('needs-verification');button?.classList.add('needs-verification');row?.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>{(hasDraft?button:input)?.focus()},350);button?.addEventListener('animationend',()=>{row?.classList.remove('needs-verification');input?.classList.remove('needs-verification');button.classList.remove('needs-verification')},{once:true});return}submit(false)}
+  function calculatedScore(){const correct=questions.filter(q=>states[q.id]&&states[q.id].correct).length;return questions.length?Math.round(correct/questions.length*100):0}
+  async function submit(timeUp=false,resuming=false){
+    if(session?.status==='ENTREGADO'||submitting)return;
+    if($('submitDialog').open)$('submitDialog').close();
+    submitting=true;$('confirmSubmit').disabled=true;$('submitButton').disabled=true;
+    const intent=currentSubmissionIntent(timeUp),local=loadLocal(session.email)||{},events=durablePendingEvents();
+    setSync('pending','Guardando entrega…');$('result').classList.add('show');$('score').textContent='…';$('resultText').textContent=resuming?'Recuperando la entrega interrumpida…':'Guardando respuestas y confirmando la calificación…';window.scrollTo({top:0,behavior:'smooth'});
+    try{
+      const waitDeadline=Date.now()+35000;while(sending&&Date.now()<waitDeadline)await sleep(100);if(sending)throw new Error('El guardado anterior tardó demasiado');
+      const payload={action:'sync',activityId:C.activityId,sessionId:session.sessionId,groupId:session.groupId,token:local.token||'',revision,events,drafts:rememberDrafts(),finalize:true,submissionId:intent.submissionId,expectedCounts:intent.expectedCounts,expectedScore:intent.expectedScore,requiredEventIds:intent.requiredEventIds,timeUp:!!timeUp};
+      const result=await apiPost(payload,35000,1);
+      if(result.answers)for(const [id,state]of Object.entries(result.answers))mergeServerState(id,state);
+      if(!result.ok||result.status!=='ENTREGADO')throw new Error(result.error||'No se confirmó la entrega');
+      pendingEvents=[];clearSubmissionIntent();setSync('saved','Entregado');showFinished(Number(result.score),timeUp?'Se agotó el tiempo. Actividad entregada automáticamente.':'Actividad entregada y guardada.');
+    }catch(e){$('score').textContent='—';$('resultText').textContent='La entrega todavía no fue confirmada. La actividad continúa recuperable.';setSync('error','Entrega sin confirmar');message($('activityMessage'),`${e?.message||'No se pudo confirmar la entrega.'} Sus respuestas permanecen en este dispositivo; reintente o retome la actividad con el mismo correo.`);$('submitButton').disabled=false;$('confirmSubmit').disabled=false}
+    finally{submitting=false}
+  }
+  function showFinished(score,text){session.status='ENTREGADO';clearSubmissionIntent();clearInterval(timerId);$('timer').hidden=true;$('result').classList.add('show');$('score').textContent=Number(score)||0;$('resultText').textContent=text;$('submitButton').disabled=true;$('confirmSubmit').disabled=true;renderClues();window.scrollTo({top:0,behavior:'smooth'})}
+  function emergencyBeacon(){if(!session||typeof navigator.sendBeacon!=='function')return false;const local=loadLocal(session.email)||{},intent=local.pendingSubmission,events=durablePendingEvents();if(!events.length&&!intent)return false;const payload={action:'sync',activityId:C.activityId,sessionId:session.sessionId,groupId:session.groupId,token:local.token||'',revision,events,drafts:rememberDrafts(),finalize:!!intent,submissionId:intent?.submissionId||'',expectedCounts:intent?.expectedCounts||{},expectedScore:intent?.expectedScore,requiredEventIds:intent?.requiredEventIds||[],timeUp:!!intent?.timeUp};try{return navigator.sendBeacon(C.scriptUrl,new Blob([JSON.stringify(payload)],{type:'text/plain;charset=UTF-8'}))}catch{return false}}
+  $('startButton').addEventListener('click',()=>enter('start'));$('resumeButton').addEventListener('click',()=>enter('resume'));$('submitButton').addEventListener('click',prepareSubmit);$('cancelSubmit').addEventListener('click',()=>$('submitDialog').close());$('confirmSubmit').addEventListener('click',()=>submit(false));window.addEventListener('online',()=>{if(session&&pendingEvents.length){clearTimeout(retryTimer);retryTimer=null;scheduleBatchSync()}});document.addEventListener('visibilitychange',()=>{if(document.hidden&&session&&session.status!=='ENTREGADO')saveDrafts()});window.addEventListener('pagehide',()=>{if(session&&session.status!=='ENTREGADO'){saveDrafts();emergencyBeacon()}});window.addEventListener('beforeunload',e=>{if(session&&session.status!=='ENTREGADO'){saveDrafts();emergencyBeacon();e.preventDefault();e.returnValue=''}});
+  applyConfig();
+})();
+</script>
+</body>
+</html>
